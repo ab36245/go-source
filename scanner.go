@@ -31,15 +31,13 @@ func (s *Scanner) NextChar() Char {
 	c := Char{span: s.point()}
 	if s.row < len(s.lines) && s.col < len(s.lines[s.row]) {
 		c.rune = s.lines[s.row][s.col]
-	} else {
-		c.flag = charEOF
-	}
-	if !c.IsEOF() {
 		s.col++
 		if s.col >= len(s.lines[s.row]) {
 			s.row++
 			s.col = 0
 		}
+	} else {
+		c.flag = charEOF
 	}
 	return c
 }
@@ -98,7 +96,7 @@ func (s *Scanner) NextRune() (rune, bool) {
 			w = i
 			break
 		}
-		r = (r << 8) | int(b&0x3F)
+		r = (r << 6) | int(b&0x3F)
 	}
 	return rune(r), w > 0
 }

@@ -1,4 +1,4 @@
-module go-source
+module github.com/ab36245/go-source
 
 go 1.24.3
 

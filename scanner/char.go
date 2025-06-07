@@ -1,7 +1,8 @@
-package source
+package scanner
 
 import (
 	"fmt"
+	"strings"
 	"unicode"
 	"unicode/utf8"
 
@@ -9,13 +10,22 @@ import (
 )
 
 type Char struct {
-	rune rune
-	flag charFlag
-	span
+	rune    rune
+	scanner *Scanner
+	row     int
+	col     int
+}
+
+func (c Char) Col() int {
+	return c.col
 }
 
 func (c Char) Is(r rune) bool {
 	return c.rune == r
+}
+
+func (c Char) IsAny(rs string) bool {
+	return strings.ContainsRune(rs, c.rune)
 }
 
 func (c Char) IsDigit() bool {
@@ -23,7 +33,7 @@ func (c Char) IsDigit() bool {
 }
 
 func (c Char) IsEOF() bool {
-	return c.flag&charEOF == charEOF
+	return c.rune == 0
 }
 
 func (c Char) IsError() bool {
@@ -38,8 +48,20 @@ func (c Char) IsPrint() bool {
 	return unicode.IsPrint(c.rune)
 }
 
+func (c Char) IsSpace() bool {
+	return unicode.IsSpace(c.rune)
+}
+
 func (c Char) Rune() rune {
 	return c.rune
+}
+
+func (c Char) Row() int {
+	return c.row
+}
+
+func (c Char) Scanner() *Scanner {
+	return c.scanner
 }
 
 func (c Char) Size() int {
@@ -50,6 +72,10 @@ func (c Char) Size() int {
 		return 1
 	}
 	return utf8.RuneLen(c.rune)
+}
+
+func (c Char) Show() string {
+	return c.scanner.Show(c.row, c.col, c.row, c.col)
 }
 
 func (c Char) String() string {
@@ -82,9 +108,3 @@ func (c Char) Width() int {
 	}
 	return runewidth.RuneWidth(c.rune)
 }
-
-type charFlag uint8
-
-const (
-	charEOF charFlag = 1 << iota
-)

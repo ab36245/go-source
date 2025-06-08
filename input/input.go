@@ -6,7 +6,7 @@ type Input struct {
 	nextByte func() byte
 }
 
-func (i *Input) Next() rune {
+func (i *Input) Next() Rune {
 	var r int
 	var w int
 	b := i.nextByte()
@@ -38,5 +38,5 @@ func (i *Input) Next() rune {
 		}
 		r = (r << 6) | int(b&0x3F)
 	}
-	return rune(r)
+	return Rune(r)
 }
